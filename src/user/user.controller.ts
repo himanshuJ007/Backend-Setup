@@ -9,17 +9,17 @@ export class UserController {
     constructor(private userService: UserService) {
     }
     @Get()
-    findAll(): User[] {
-        return this.userService.findAll();;
+    findAll(): Promise<User[]> {
+        return this.userService.findAll();
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string): string {
-        return `This action returns a #${id} user`;
+    findOne(@Param('id') id: string): Promise<User> {
+        return this.userService.findOne(id);
     }
 
     @Post()
-    async create(@Body() createCatDto: CreateUserDto) {
+    async create(@Body() createCatDto: CreateUserDto): Promise<User> {
         return this.userService.create(createCatDto);
     }
 
