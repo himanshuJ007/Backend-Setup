@@ -17,13 +17,22 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("mongoose");
 const mongoose_2 = require("@nestjs/mongoose");
 const bcrypt = require("bcryptjs");
+const aws_service_1 = require("../aws/aws.service");
 let UserService = class UserService {
-    constructor(userModel) {
+    constructor(userModel, awsService) {
         this.userModel = userModel;
+        this.awsService = awsService;
     }
-    async create(user) {
+    async create(data, file) {
+        let user = Object.assign({}, data);
         user.password = await bcrypt.hash(user.password, 10);
         const newUser = await this.userModel.create(Object.assign(Object.assign({}, user), { isActive: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }));
+        try {
+            user["profilePicture"] = await this.awsService.ProfilePictureUpload(file);
+        }
+        catch (error) {
+            console.log(`Failed to upload image file: ${error.message}`);
+        }
         return await this.findOne(newUser._id);
     }
     async findAll() {
@@ -32,11 +41,15 @@ let UserService = class UserService {
     async findOne(_id) {
         return await this.userModel.findOne({ _id });
     }
+    async findOneByEmail(email) {
+        return await this.userModel.findOne({ email });
+    }
 };
 UserService = __decorate([
     common_1.Injectable(),
     __param(0, mongoose_2.InjectModel('User')),
-    __metadata("design:paramtypes", [mongoose_1.Model])
+    __metadata("design:paramtypes", [mongoose_1.Model,
+        aws_service_1.AwsService])
 ], UserService);
 exports.UserService = UserService;
 //# sourceMappingURL=user.service.js.map

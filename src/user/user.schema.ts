@@ -5,6 +5,7 @@ export const UserSchema = new mongoose.Schema({
     age: {type: Number},
     email: {type: String, required: true},
     password: {type: String},
+    profilePicture: { type: String},
     isActive: { type: Boolean, default: false },
     createdAt: { type: Date, hidden: true },
     updatedAt: { type: Date, hidden: true },

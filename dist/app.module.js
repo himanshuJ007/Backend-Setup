@@ -12,6 +12,8 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const user_module_1 = require("./user/user.module");
 const mongoose_1 = require("@nestjs/mongoose");
+const authentication_module_1 = require("./authentication/authentication.module");
+const config_1 = require("@nestjs/config");
 const URI = 'mongodb://localhost:27017/';
 let AppModule = class AppModule {
 };
@@ -22,7 +24,12 @@ AppModule = __decorate([
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
             }),
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+                envFilePath: ['.development.env'],
+            }),
             user_module_1.UserModule,
+            authentication_module_1.AuthenticationModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
